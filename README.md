@@ -65,6 +65,16 @@ Full vocabulary in [`skill/sigmund/references/wild-pathologies.md`](skill/sigmun
 - **Secret-aware.** API keys, JWTs, SSH keys, PII detected at intake; redacted in output; surfaced as security findings.
 - **Read-only.** Discharge recommends edits; you apply them.
 
+## Eval substrate
+
+A vocabulary regression check ships in [`eval/`](eval/). Catches dropped pathologies, missing citations, removed probes, and reference-cap violations.
+
+```bash
+python3 eval/check.py
+```
+
+Per [`CLAUDE.md`](CLAUDE.md) rule 3, every release requires this to exit 0. The substrate is the lighter version of what the v0.4 self-session prescribed; full transcript-based eval (running the skill end-to-end against golden patient archetypes) is targeted for v0.7+.
+
 ## How it stays current
 
 Diagnostic vocabulary grows. Three update channels:
