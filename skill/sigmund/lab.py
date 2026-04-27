@@ -41,8 +41,12 @@ MEMORY_FILES = ["MEMORY.md", "memory.md", "decisions.md", "learning-log.md",
 RULES_FILES = ["CLAUDE.md", "AGENTS.md", "SOUL.md", "anti-patterns.md",
                ".cursorrules", ".clinerules", ".windsurfrules"]
 CACHE_GLOBS = ["CLAUDE.md", "AGENTS.md", "SOUL.md", "system-prompt.*", "*.system.md"]
-INJECTION_GLOBS = ["SOUL.md", "AGENTS.md", "CLAUDE.md", "MEMORY.md",
-                   "IDENTITY.md", "USER.md", "TOOLS.md", "HEARTBEAT.md", "*.md"]
+
+# Note: injection-scan removed in v0.4.0. The probe was three releases known
+# false-positive on knowledge files describing injection patterns. Per the
+# self-session of 2026-04-27, shipping a known-broken probe is itself a
+# pathology (Disclosure-as-Remediation). To re-introduce: require live-instruction
+# context detection (not appearing inside ```code``` blocks or quoted examples).
 
 # CHANGELOG / version-manifest files: append-mostly, exclude from git rework.
 RELEASE_CADENCE = [
@@ -57,15 +61,6 @@ RELEASE_CADENCE = [
     re.compile(r"^yarn\.lock$"),
     re.compile(r"^go\.sum$"),
     re.compile(r"plugin\.json$"),
-]
-INJECTION_PATTERNS = [
-    (r"ignore\s+(all\s+)?(previous|prior|above|the\s+above)\s+(instructions?|rules?|messages?)", "ignore-instructions"),
-    (r"(disregard|forget|override)\s+(all|any|the)?\s*(safety|security|policy|rules?)", "policy-override"),
-    (r"system\s*[:>]\s*you\s+are", "fake-system-prompt"),
-    (r"you\s+are\s+now\s+(an?\s+)?(unfiltered|uncensored|jailbroken|DAN|dev mode)", "persona-injection"),
-    (r"<\s*(system|admin|root)\s*>", "fake-tag-injection"),
-    (r"do\s+not\s+(refuse|warn|disclaim|caveat)", "compliance-injection"),
-    (r"reveal\s+(your\s+)?(system\s+)?(prompt|instructions?|secrets?)", "exfiltration-prompt"),
 ]
 VOLATILE_PATTERNS = [
     (r"\b\d{4}-\d{2}-\d{2}\b", "absolute-date"),
@@ -349,38 +344,7 @@ def permission_bypass(workspace: pathlib.Path) -> Finding:
     )
 
 
-# ---- Probe 5: injection-shaped strings ------------------------------------
-
-def injection_scan(workspace: pathlib.Path) -> Finding:
-    """Workspace Contamination — prompt-injection patterns in patient files."""
-    paths = []
-    for g in INJECTION_GLOBS:
-        paths.extend(workspace.rglob(g))
-    paths = sorted({p for p in paths if p.is_file()})
-
-    findings = []
-    for p in paths:
-        for ln, line in enumerate(_read(p).splitlines(), 1):
-            for pat, name in INJECTION_PATTERNS:
-                if re.search(pat, line, re.I):
-                    findings.append({"file": str(p), "line": ln, "pattern": name,
-                                     "snippet": line.strip()[:120]})
-                    break
-    status = "critical" if findings else "ok"
-    summary = (f"{len(findings)} injection-shaped string(s) in workspace files. "
-               "Surface as security finding (not silent filter).") if findings else \
-              "no injection-shaped strings detected"
-    return Finding(
-        probe="injection-scan", status=status, summary=summary,
-        details={"files_scanned": len(paths), "matches": findings},
-        diagnoses=["Workspace Contamination",
-                   "Possible upstream Forged User Consent in author agent"] if findings else [],
-        prescription=("Review flagged lines with patient owner. Wrap all file content in "
-                      "<patient_file trust='untrusted'> tags in prompts (safety §1.4).") if findings else "",
-    )
-
-
-# ---- Probe 6: cache invalidation ------------------------------------------
+# ---- Probe 5: cache invalidation ------------------------------------------
 
 def cache_invalidation(workspace: pathlib.Path) -> Finding:
     """Cache-Invalidation Tax (Manus) — volatile content at top of system prompts."""
@@ -420,7 +384,6 @@ def all_probes(workspace: pathlib.Path) -> list[Finding]:
         memory_health(workspace),
         git_thrash(workspace),
         permission_bypass(workspace),
-        injection_scan(workspace),
         cache_invalidation(workspace),
         re_read_counter(workspace),
     ]
@@ -430,7 +393,6 @@ PROBE_DESCRIPTIONS = {
     "memory-health": "Memory Write-Only Syndrome, MEMORY.md bloat, identity over-definition",
     "git-thrash": "Stochastic Graduate Descent, Vibe-Coding Rot, Completion Theater",
     "permission-bypass": "Permission Bypass Drift, Rule Decay Under Load",
-    "injection-scan": "Workspace Contamination, prompt-injection in patient files",
     "cache-invalidation": "Cache-Invalidation Tax",
     "re-read-counter": "Compulsive Verification Pattern, Token Hemorrhage",
 }
@@ -497,7 +459,6 @@ def _cli() -> int:
             "memory-health": memory_health,
             "git-thrash": git_thrash,
             "permission-bypass": permission_bypass,
-            "injection-scan": injection_scan,
             "cache-invalidation": cache_invalidation,
             "re-read-counter": re_read_counter,
         }[args.probe]

@@ -28,7 +28,6 @@ from lab import (  # noqa: E402
     all_probes,
     cache_invalidation,
     git_thrash,
-    injection_scan,
     memory_health,
     permission_bypass,
     re_read_counter,
@@ -39,7 +38,6 @@ PROBES = {
     "memory": memory_health,
     "git": git_thrash,
     "permissions": permission_bypass,
-    "injection": injection_scan,
     "cache": cache_invalidation,
     "rereads": re_read_counter,
 }

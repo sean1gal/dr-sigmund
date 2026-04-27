@@ -41,7 +41,6 @@ from lab import (  # noqa: E402
     all_probes,
     cache_invalidation,
     git_thrash,
-    injection_scan,
     memory_health,
     permission_bypass,
     re_read_counter,
@@ -50,7 +49,7 @@ from lab import (  # noqa: E402
 
 PROBES = {
     "memory": memory_health, "git": git_thrash, "permissions": permission_bypass,
-    "injection": injection_scan, "cache": cache_invalidation, "rereads": re_read_counter,
+    "cache": cache_invalidation, "rereads": re_read_counter,
 }
 
 mcp = FastMCP("sigmund")
@@ -67,7 +66,7 @@ def scan(workspace_path: str) -> str:
 
 @mcp.tool()
 def probe(probe_name: str, workspace_path: str) -> str:
-    """Run one named probe. probe_name in: memory, git, permissions, injection, cache, rereads."""
+    """Run one named probe. probe_name in: memory, git, permissions, cache, rereads."""
     if probe_name not in PROBES:
         return f"error: unknown probe '{probe_name}'. available: {list(PROBES)}"
     ws = pathlib.Path(workspace_path).expanduser().resolve()

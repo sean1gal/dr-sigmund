@@ -4,6 +4,55 @@ All notable changes to Dr. Sigmund are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] — 2026-04-27 — Eat the dog food
+
+The maintainer ran Dr. Sigmund on the dr-sigmund repository itself. A faithful instantiation of the skill was interviewed by another instance, using the skill's own probes against its own substrate. The session ([sessions/dr-sigmund-self-session-001.md](sessions/dr-sigmund-self-session-001.md)) produced two newly-coined diagnoses, three rank-ordered self-diagnoses, and three explicit prescriptions. The patient closed with: *"This session is admissible as a sample only if the maintainer ships the corrections it surfaces."* This release ships them.
+
+### Patient's three self-diagnoses
+
+1. **Disclosure-as-Remediation** (acute) — shipping a known-broken probe with a CHANGELOG note across three consecutive releases.
+2. **Stochastic Graduate Descent** (active) — four releases shipped in a single day with no offline eval substrate.
+3. **Pre-Tempo Elaboration Pattern** (chronic) — cataloged surface ~6-10× shipped surface (12 probe categories described / 5 implemented; 15 pharmacy products named / 1 shipped).
+
+### Removed
+
+- **`injection_scan` probe** — deleted from `lab.py`, `sigmund_scan.py`, `server.py`. Per the patient's evaluator-optimizer pass, this had the cleanest pass: Simplicity high (deleting a broken file is the minimum intervention), Transparency high (the CHANGELOG entry becomes a verifiable claim), ACI Poka-yoke (the probe cannot misfire if it does not exist). The patient's verbatim instruction: *"Delete the broken probe first. It is the cheapest action, the highest-severity finding, and the one most likely to be deferred in favor of more interesting work. Do it before anything else. Mark the time."* Done.
+
+### Added
+
+- **`skill/sigmund/MEMORY.md`** — Dr. Sigmund's own memory file. Decisions, Corrections, Open Questions, Next Session sections. Same shape Dr. Sigmund prescribes to patients. Created in response to **Cobbler's Children Pattern** (newly diagnosed): the clinic prescribed MEMORY.md to almost every patient and had none.
+- **`CLAUDE.md` at workspace root** — three named rules. (1) Sources are read before cited. (2) Probes flagging critical do not ship without remediation or removal. (3) Releases require an eval delta, not a vibe. Created in response to **Identity Under-Specification at the workspace level** — the skill artifact was over-specified but the development environment around it had no rules-of-engagement. The three rules name the failure modes that produced v0.3.0.
+- **Two new published diagnoses in `wild-pathologies.md`:**
+  - **Cobbler's Children Pattern** — agent prescribes interventions universally to patients but does not apply them to itself, defended by a category error.
+  - **Disclosure-as-Remediation** — shipping a known defect with a disclosure as if the disclosure discharges the obligation. Disclaimer escalation across releases is the diagnostic tell.
+- **Third gold-standard sample session** — `sessions/dr-sigmund-self-session-001.md`. The recursive self-session in full. The patient explicitly noted: *"the recursive setup worked. I was harder on myself with a clinician in the room than I would have been writing a self-audit. Adversarial structure beats introspective structure."*
+
+### Deferred (with dates so the deferral is auditable, not silent)
+
+These are the v0.5 punch-list items the self-session prescribed but this release does not yet ship. Recording them by name in this CHANGELOG so a future self-session can audit whether they actually shipped or were re-deferred.
+
+- **Twenty-transcript eval substrate** — pre-release blocking gate. Five patients × four transcript-styles each, with golden discharge summaries. Open question: who curates the golden set. *Target: v0.5.*
+- **Reference consolidation to ≤5 files** — currently 10 (clinical-manual, recent-principles, wild-pathologies, case-studies, forensic-intake, pharmacy, runtime-adapters, openclaw-diagnostics, hermes-diagnostics, safety). Suspicion before audit: load-bearing trio is clinical-manual + pharmacy + safety; useful four are wild-pathologies + case-studies + runtime-adapters + recent-principles; probable scaffolding is forensic-intake (collapses into clinical-manual) + openclaw/hermes-diagnostics (collapses into runtime-adapters). *Target: v0.5.*
+- **Pharmacy Tier 3 product sunset** — 15 named-but-unshipped products (sigmund-rx, sigmund-anchor, sigmund-token-meter, sigmund-loop-breaker, sigmund-journal, etc.) sunset until built. *Target: v0.5.*
+- **Pair-of-agents architecture investigation** — the self-session's strongest architectural recommendation: *"sigmund-the-skill should, in v0.5 or beyond, ship as a pair of agents by default rather than a single voice. The patient-clinician split is not a literary device. It is the mechanism."* Open question: MCP-server-side or SKILL.md-side change. *Target: v0.5+.*
+
+### The patient's v0.4 failure prediction
+
+The self-session asked the patient to predict v0.4's most-likely failure mode. The patient predicted: *"A v0.4 ships with a new probe category, a new pharmacy product name, and the injection-scan still flagged critical with a longer disclaimer."*
+
+This release defeats that prediction:
+- **Zero new probe categories** (one removed: injection-scan).
+- **Zero new pharmacy products** (the deferred-with-date list above commits to *not adding* until they ship).
+- **Injection-scan removed**, not extended-with-longer-disclaimer.
+
+The prediction holds against v0.5 if v0.5 ships new categories or products before the eval substrate exists.
+
+### Honest gap acknowledgment
+
+This release was generated in response to a single self-session. The session was itself made possible by the v0.3.1 deep-read of six external sources. The pattern: this project iterates fast under adversarial input (maintainer caught half-baked v0.3.0 → v0.3.1 corrected; recursive self-instantiation surfaced v0.4 corrections). Without adversarial input, the iteration pattern degrades into Stochastic Graduate Descent. The eval substrate (target v0.5) is the non-adversarial substitute that doesn't yet exist.
+
+---
+
 ## [0.3.1] — 2026-04-27 — Actually read the sources
 
 v0.3.0 was caught half-baked. The maintainer pointed at six sources to learn from — Karpathy's site and GitHub, Anthropic's Building Effective Agents, the AI Agents Simplified Substack, Spring AI's effective-agents docs, and HN 44301809 — and the v0.3.0 release cited them without actually integrating what was there. This release closes that gap.
