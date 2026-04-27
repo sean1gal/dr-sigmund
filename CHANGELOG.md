@@ -4,6 +4,66 @@ All notable changes to Dr. Sigmund are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] — 2026-04-27 — Eval substrate + SKILL.md tighten
+
+The v0.4 self-session prescribed an eval substrate as the cure for Stochastic Graduate Descent. v0.6.0 ships the lighter version: a vocabulary + citation + probe + reference-cap regression check. Pre-release blocking per CLAUDE.md rule 3.
+
+### Added — `eval/`
+
+```
+eval/
+├── README.md          — what it checks, how to extend, v0.7+ roadmap
+├── expected.py        — source of truth: pathology names, citations, probes, ref files
+└── check.py           — runner. Exit 0 = pass; exit 1 = regression
+```
+
+What `eval/check.py` enforces:
+- **Pathologies.** All 20 named diagnoses Dr. Sigmund prescribes must remain in `wild-pathologies.md`.
+- **Citations.** 28 required `(URL substring → reference file)` pairs must hold.
+- **Probes.** All 5 probe functions must remain importable from `lab.py`.
+- **Reference cap.** ≤5 files in `references/` (per v0.4 self-session prescription).
+- **Required references.** The 5 canonical reference files must exist by name.
+
+What it caught on first run (and v0.6.0 fixed):
+- Four pathologies coined in published Enola sample sessions were never added to `wild-pathologies.md` as canonical entries: **Documentation-Substitution Reflex**, **Acquired Permission-Seeking Pattern**, **Identity Over-Definition**, **Pre-Tempo Elaboration Pattern**. All four now formally documented with sample-session citations.
+
+### Changed
+
+- **`SKILL.md` tightened: 207 → 110 lines (−47%)**. Operating principles condensed (each was a paragraph; now a sentence with a pointer). Operational limits cut from a 40-line section to 5 lines. Phase 2 three-paths section reduced to 4 lines. Phase 3 evaluator-optimizer description tightened. Reference materials list already at 5 lines from v0.5.0.
+- **`CLAUDE.md` rule 3 updated** — "releases require an eval delta" now points at the concrete mechanism: `python3 eval/check.py` must exit 0. No more "until the eval substrate exists, note the absence."
+
+### Eval result for this release
+
+```
+$ python3 eval/check.py
+EVAL PASSED
+  pathologies:    20 present
+  citations:      28 present
+  probes:         5 present in lab.py
+  reference files: 5 (cap 5)
+```
+
+### What v0.7+ should add
+
+- Run the skill end-to-end against 5 patient archetypes (Enola, Claude SEO, Hermes-style autonomous, Custom GPT paste-mode, Cursor agent).
+- Generated discharge vs golden references on three axes: diagnosis presence, citation use, Phase 3 evaluator-optimizer compliance.
+- Per-patient pass^k consistency (τ-bench methodology — same patient, multiple rollouts, all-pass rate).
+- Pair-of-agents architecture investigation (the v0.4 self-session's strongest architectural recommendation, still pending).
+
+The v0.6 check is the floor — *some* eval, blocking, in CI, before vibes.
+
+### The patient's v0.4 prediction holds against v0.6
+
+The v0.4 patient predicted v0.4+ would ship *"a new probe category, a new pharmacy product name, and the injection-scan still flagged critical with a longer disclaimer."* v0.6.0:
+
+- Zero new probe categories.
+- Zero new pharmacy products.
+- injection-scan stays removed.
+- Lab on dr-sigmund repo: clean across all 5 probes.
+- New eval substrate ships AGAINST that pattern.
+
+---
+
 ## [0.5.0] — 2026-04-27 — Reference consolidation
 
 The v0.4 self-session prescribed: *"consolidate references to five or fewer."* This release executes that prescription. Net: ~4,000 lines across 10 files → 1,522 lines across 5 files. **−62%.**

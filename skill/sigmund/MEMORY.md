@@ -61,6 +61,19 @@ This file follows the same shape Dr. Sigmund prescribes to patients: Decisions, 
 
 ---
 
+### 2026-04-27 — v0.6.0
+**Decision:** Eval substrate exists. `eval/check.py` runs vocabulary + citation + probe + reference-cap regression check. Blocking in release process per CLAUDE.md rule 3.
+**Rationale:** v0.4 self-session prescribed twenty-transcript eval substrate. v0.6.0 ships the lighter version: vocabulary regression (does the diagnostic vocabulary remain present in references?), citation regression (do the source-grounding URLs remain?), probe presence (do the lab probes still exist?), reference cap (still ≤5 files?). Full transcript-based eval with golden discharge summaries deferred to v0.7+.
+**What it caught on first run:** 4 pathology regressions — Acquired Permission-Seeking Pattern, Documentation-Substitution Reflex, Identity Over-Definition, Pre-Tempo Elaboration Pattern. All four were named in published Enola/self-session samples but never added to wild-pathologies.md as canonical entries. Now present.
+**Status:** Active. Pre-release blocking gate.
+
+### 2026-04-27 — v0.6.0
+**Decision:** SKILL.md tightened from 207 → 110 lines. -47%.
+**Rationale:** Per Karpathy minimalism prescription in pharmacy.md. Each line earns its place. Cost expectations table cut to one paragraph. Phase 2 three-paths section condensed. Phase 3 evaluator-optimizer description tightened.
+**Status:** Active.
+
+---
+
 ## Open Questions
 
 These are the v0.4-active uncertainties Dr. Sigmund holds. They should be closed by name in future releases or explicitly carried forward.

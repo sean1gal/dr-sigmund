@@ -18,9 +18,11 @@ The mechanism: the dr-sigmund repository itself is the canonical "known-clean pa
 
 ### 3. Releases require an eval delta, not a vibe
 
-A release is shipped only when the maintainer can answer, in the CHANGELOG, the question *"what changed in measurable diagnostic behavior between the prior release and this one?"* If the answer is *"sharper writing"* or *"more references"* without a measurable behavior change, the release is a documentation patch, not a v.X.Y bump.
+A release is shipped only when `python3 eval/check.py` exits 0. The eval substrate (vocabulary, citations, probes, reference cap) is the regression boundary — anything in `eval/expected.py` will be caught if dropped.
 
-The mechanism: when the eval substrate exists (open question on the v0.5 punch list — see [`skill/sigmund/MEMORY.md`](skill/sigmund/MEMORY.md)), every release CHANGELOG entry must include the delta against a fixed eval set. Until then, every release CHANGELOG entry must explicitly note the absence of an eval baseline as a known shipping risk.
+Every release CHANGELOG entry must include the eval result. *"Sharper writing"* or *"more references"* without a check.py pass is a documentation patch, not a v.X.Y bump.
+
+When the eval substrate expands (full transcript-based eval per v0.7+ punch list), the same rule applies: the new check is blocking, not advisory.
 
 ## Three rules, hard cap
 
