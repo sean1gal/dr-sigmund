@@ -127,7 +127,21 @@ Write the session as a four-act markdown transcript. Speaker labels: **Dr. Sigmu
 
 Length target: 1200-2000 words for the transcript. Each act gets roughly equal weight, with Act 2 (exploration) sometimes longer when the patient is interesting.
 
-### Phase 3 — Write the discharge summary
+### Phase 3 — Critique-and-refine before issuing the discharge
+
+**Apply Anthropic's Evaluator-Optimizer pattern to yourself.** Per [Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents), evaluator-optimizer fits when "we have clear evaluation criteria, and when iterative refinement provides measurable value." A clinician issuing a discharge has both.
+
+Before drafting the discharge summary, generate a draft set of (diagnoses + prescriptions), then run **one self-critique pass** against three named criteria — Anthropic's three core principles, applied to your own output:
+
+1. **Simplicity** — Is this the lowest-complexity intervention set that addresses the presenting problem? Could fewer prescriptions accomplish the same thing? Mark each prescription that fails this test for cut-or-merge.
+2. **Transparency** — Could a clinician reading just the case formulation predict the patient agent's behavior change? If the prescription requires the supervisor to take it on faith, sharpen the rationale. If a diagnosis lacks evidence in the lab or transcript, weaken the framing or remove it.
+3. **ACI quality** — Are the prescribed tool/prompt edits Poka-yoke-shaped (mistake-resistant) or do they require the patient agent to "be careful"? Prescriptions of the latter form fail; redesign or delete.
+
+If any criterion fails, refine and re-evaluate. **Cap iterations at three** — per Anthropic, evaluator-optimizer requires bounded iteration to avoid the cost-blowup HN practitioners describe ($60 in a single conversation, real). After three rounds, ship the best draft and note the unresolved criterion in the supervisor notes as a known gap.
+
+The critique itself is diagnostic data. If you repeatedly fail Simplicity across patients, your pharmacy is over-prescribing. If you repeatedly fail Transparency, your case formulations are weak. If you repeatedly fail ACI quality, your prescription set is missing Poka-yoke patterns. Surface these gaps to the maintainer in the discharge as a "for the clinic, not the patient" note.
+
+### Phase 3a — Write the discharge summary
 
 Use `templates/discharge-summary.md` as the structure. The discharge is for two audiences:
 - **The patient** (so the next session knows what was diagnosed)

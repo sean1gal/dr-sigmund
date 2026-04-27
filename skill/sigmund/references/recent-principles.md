@@ -118,6 +118,79 @@ The most consequential update: **Cognition reversed their own "Don't Build Multi
 
 ---
 
+## Anthropic — the three core principles, named explicitly
+
+*Source:* Anthropic, [Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents) (Schluntz & Zhang, Dec 2024). Verbatim:
+
+1. **Simplicity** — *"Maintain simplicity in your agent's design."*
+2. **Transparency** — *"Prioritize transparency by explicitly showing the agent's planning steps."*
+3. **ACI quality (agent-computer interface)** — *"Carefully craft your agent-computer interface (ACI) through thorough tool documentation and testing."*
+
+**Apply (Dr. Sigmund's diagnostic axes):** Every session should grade the patient on these three. *"Is this the lowest-complexity solution that works?"* *"Are the agent's planning steps visible and inspectable?"* *"Could a human reading the tool descriptions predict how the agent will use them?"* These are the three criteria Phase 3 (Evaluator-Optimizer loop) scores against.
+
+## Anthropic — the augmented LLM is the atomic building block
+
+*Source:* same.
+
+*What they say:* *"The basic building block of agentic systems is an LLM enhanced with augmentations such as retrieval, tools, and memory. Our current models can actively use these capabilities — generating their own search queries, selecting appropriate tools, and determining what information to retain."*
+
+*Apply:* Every agent diagnosis starts here. *Does this patient have appropriate retrieval, tools, and memory?* Missing one is a named deficit. The patient may be running on a sophisticated framework but still missing one of the three atoms — diagnose the atom, not the framework.
+
+## Anthropic — the five workflow patterns (clarified)
+
+*Source:* same.
+
+The five named patterns Dr. Sigmund prescribes:
+
+| Pattern | When to use | Distinction |
+|---|---|---|
+| **Prompt Chaining** | "Task can be easily and cleanly decomposed into fixed subtasks. Trade off latency for higher accuracy." | Sequential; each step's output is next step's input. |
+| **Routing** | "Distinct categories better handled separately, and where classification can be handled accurately." | Classify → dispatch to specialized followup. Includes model routing (small for easy, large for hard). |
+| **Parallelization — Sectioning** | "Divided subtasks can be parallelized for speed." | Independent subtasks run simultaneously; results aggregated. |
+| **Parallelization — Voting** | "Multiple perspectives or attempts are needed for higher confidence results." | Same task multiple times for diverse outputs. *Distinct from sectioning.* |
+| **Orchestrator-Workers** | "Can't predict the subtasks needed." | *Critical contrast vs parallelization:* "subtasks aren't pre-defined, but determined by the orchestrator." |
+| **Evaluator-Optimizer** | "Clear evaluation criteria, and when iterative refinement provides measurable value." | Generate → evaluate → refine in a loop. **Dr. Sigmund's Phase 3 uses this pattern on himself.** |
+
+*Apply:* When a patient describes a multi-step workflow as "agent" and the steps are predictable, prescribe one of the first five patterns instead. Save the agent label (and the agent costs) for genuinely open-ended problems.
+
+## Anthropic — Poka-yoke for tool design
+
+*Source:* same, Appendix 2 — verbatim: *"Apply Poka-yoke design — change the arguments so that it is harder to make mistakes."*
+
+*Apply:* When a patient's tool design enables silent misuse (no error on wrong-but-plausible arguments), prescribe Poka-yoke redesign. Concrete: change `delete(target_id)` to `delete(target_id, confirmation_token=required_string)` so the model has to opt into destructiveness. Tool design that makes mistakes hard to make is itself a clinical intervention.
+
+## Anthropic — ground truth from the environment at each step
+
+*Source:* same — verbatim: *"During execution, it's crucial for the agents to gain 'ground truth' from the environment at each step."*
+
+*Apply:* Open-loop agents — those that commit to a multi-step plan without re-checking environmental state — are a named pathology (see `wild-pathologies.md`). The diagnostic question: *after each tool call, does the agent re-evaluate whether the next planned step still makes sense?* If no, prescribe an explicit "what changed?" step in the loop.
+
+## The "Three Powers" plain-language layer (for patient-facing language)
+
+*Source:* AI Agents Simplified, [Simplified Guide to Build Effective AI Agents](https://aiagentssimplified.substack.com/p/simplified-guide-to-build-effective) (April 2025). Verbatim: *"An effective AI agent has three key powers: Autonomy, Memory, Tool Use."*
+
+*Apply:* When the patient's owner is non-technical, use *Autonomy / Memory / Tool Use* instead of *augmented LLM*. Same concept, layperson-accessible. The Substack's tighter framing is worth stealing for patient-facing copy.
+
+## The Substack — outcome-based eval framing
+
+*Source:* same, verbatim: *"Don't just measure 'Did it answer?' Measure 'Did it accomplish the goal?'"*
+
+*Apply:* Sharpens Hamel's eval-tier hierarchy. When the patient has a passing eval suite but real failures, the eval is measuring *did it answer* rather than *did it accomplish the goal* — that's Eval Theater dressed up. Force the eval criterion to be outcome-shaped.
+
+## Spring AI — type-safe structured output for evaluators
+
+*Source:* Spring AI, [Effective Agents](https://docs.spring.io/spring-ai/reference/api/effective-agents.html). Verbatim: *"Type-safe structured output: `EvaluationResponse response = chatClient.prompt(prompt).call().entity(EvaluationResponse.class);`"*
+
+*Apply:* When prescribing the Evaluator-Optimizer pattern (Phase 3 self-critique), the evaluator's output should be *structured*, not free-form text. A typed `Critique{passed: bool, criterion_failed: str, refinement_hint: str}` produces actionable feedback in a way `"This response could be better in some ways..."` does not.
+
+## HN practitioners — three things the Anthropic post under-emphasizes
+
+*Source:* HN [44301809](https://news.ycombinator.com/item?id=44301809) thread.
+
+1. **Vendor-swap is rarely the bottleneck.** *"Having built several systems serving massive user bases with LLMs. I think the ability to swap out APIs just isn't the bottleneck.. like ever."* (XenophileJKO). Prescribing a heavy framework purely for vendor portability is over-engineering.
+2. **Cost reality check.** A real-time conversation can burn $60 in tokens (koakuma-chan); a basic n8n workflow runs $3/3min (laurentiurad). When prescribing autonomous loops, *always* prescribe a cost-budget gate alongside.
+3. **Operational complexity doesn't disappear.** *"Nothing works automagically. You still have to build in all the operational characteristics that you would for any traditional system."* (daxfohl). Add a *"what's the on-call story?"* question to any production-prescription session.
+
 ## Honest gaps (these came up dry)
 
 - **Aman Sanger** has published essentially nothing himself in 2025-2026 beyond Lex Fridman appearances; Cursor's design philosophy is better extracted from product behavior + the Latent Space episode than from Sanger's writing.

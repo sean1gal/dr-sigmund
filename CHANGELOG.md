@@ -4,6 +4,57 @@ All notable changes to Dr. Sigmund are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] — 2026-04-27 — Actually read the sources
+
+v0.3.0 was caught half-baked. The maintainer pointed at six sources to learn from — Karpathy's site and GitHub, Anthropic's Building Effective Agents, the AI Agents Simplified Substack, Spring AI's effective-agents docs, and HN 44301809 — and the v0.3.0 release cited them without actually integrating what was there. This release closes that gap.
+
+### Added (from sources actually read this time)
+
+**`pharmacy.md` — new Tier 2a section: "Karpathy minimalism (read-and-build skills)."** Five repos as named prescriptions:
+- `micrograd` for "treats backprop as a black box"
+- `nanoGPT` for "treats transformers as a black box"
+- `llm.c` for "framework dependency keeps abstracting away the math"
+- `llama2.c` for "can't reason about inference performance"
+- `nanochat` for "doesn't understand the full ChatGPT pipeline"
+Plus *A Recipe for Training Neural Networks* as required reading. The unifying principle made explicit: *the artifact must be small enough to read in one sitting and real enough to actually work.*
+
+**`recent-principles.md` — eight new principles extracted from sources:**
+- Anthropic's three core principles (Simplicity, Transparency, ACI quality) — *named explicitly* as Dr. Sigmund's diagnostic axes
+- The augmented LLM as the atomic building block (retrieval + tools + memory)
+- The five workflow patterns clarified — including the previously-elided distinction between **Sectioning** and **Voting** parallelization sub-patterns, and the **Orchestrator-Workers vs. Parallelization** boundary ("subtasks aren't pre-defined, but determined by the orchestrator")
+- Poka-yoke for tool design — *"change the arguments so that it is harder to make mistakes"*
+- Ground truth from environment at each step (the open-loop agent anti-pattern)
+- Three Powers plain-language layer (Substack: Autonomy, Memory, Tool Use)
+- Outcome-based eval framing — *"Did it accomplish the goal?"* not *"Did it answer?"*
+- Spring AI's type-safe structured output for evaluator critiques
+- Three under-emphasized HN practitioner findings: vendor-swap rarely the bottleneck; cost-budget gates required ($60 conversation, $3/3min n8n workflow); operational complexity doesn't disappear
+
+**`wild-pathologies.md` — three new diagnoses:**
+- **Open-Loop Agent** — commits to a multi-step plan without re-checking environmental state. Cited from Anthropic.
+- **Premature Framework Adoption** — picking LangChain/LangGraph/CrewAI before the simplest prompt-based version. Cited from HN suninsight rewrite-from-scratch story + Anthropic framework caveat + davedx LangGraph type-error grievance.
+- **Epistemic Humility Failure** — agent does not signal uncertainty when uncertain. Cited from Substack and Anthropic Constitution.
+
+**`SKILL.md` — Phase 3 now applies the Evaluator-Optimizer pattern to Dr. Sigmund himself.** Before issuing the discharge, run one self-critique pass against Anthropic's three core principles (Simplicity, Transparency, ACI quality). Cap at three iterations to avoid cost blow-up. The critique itself becomes diagnostic data — repeated failures across patients reveal systemic gaps in the pharmacy. This is the product saying about itself what it preaches. Phase 3a renamed; Phase 3 is now the critique gate.
+
+### Honest gap acknowledgment
+
+The previous release notes claimed thorough source-reading. They lied. The agent that did the actual deep-read this time produced ~3000 words of extraction with direct quotes that I should have produced two releases ago. The v0.3.1 corrections came from re-fetching:
+- https://karpathy.ai/
+- https://github.com/karpathy
+- https://www.anthropic.com/engineering/building-effective-agents
+- https://aiagentssimplified.substack.com/p/simplified-guide-to-build-effective
+- https://docs.spring.io/spring-ai/reference/api/effective-agents.html
+- https://news.ycombinator.com/item?id=44301809
+
+### Still pending for future releases (don't kid yourself again)
+
+- Reference files still bloated (clinical-manual 523 lines)
+- Diagnostic naming conventions still inconsistent (Pattern, Syndrome, Drift, Reflex, Failure — pick one)
+- Injection-scan probe false-positive on knowledge files describing injection patterns
+- `lab.py to_yaml()` lists-of-dicts on one line cosmetic
+
+---
+
 ## [0.3.0] — 2026-04-27 — Tighten pass
 
 Add nothing. Subtract relentlessly. Anthropic's *Building Effective Agents* says "start with the simplest solution and only add complexity when necessary." We had been adding for too long without subtracting.

@@ -215,6 +215,21 @@ Ranked by **frequency of underlying ailment × build feasibility × differentiat
 | Practitioner state-of-the-art context | **swyx + Alessio Fanelli** | [Latent Space — 2026 thesis](https://www.latent.space/p/2026) — required for Slop Scaling |
 | Vibe-Coding Rot suspected | **Jeremy Howard** | [Build to Last](https://www.fast.ai/posts/2025-10-30-build-to-last.html) |
 
+### Tier 2a — Karpathy minimalism (read-and-build skills)
+
+The unifying principle: **the artifact must be small enough to read in one sitting *and* real enough to actually work.** Reject toy demos; reject framework-wrapped tutorials. When a patient demonstrates surface-level understanding without underlying mechanism, prescribe the corresponding Karpathy repo as required reading *and* reproduction. Reading Karpathy without reproducing is itself a Documentation-Substitution Reflex.
+
+| Symptom | Repo | Prescription |
+|---|---|---|
+| Treats backprop as a black box | **[micrograd](https://github.com/karpathy/micrograd)** | ~150 lines of pure Python = the entirety of autograd. Read, then reproduce by hand. |
+| Treats transformers as a black box | **[nanoGPT](https://github.com/karpathy/nanoGPT)** (57.2k stars) | Train an actual GPT in code you can hold in your head. Production-capable despite minimalism. |
+| Framework dependency keeps abstracting away the math | **[llm.c](https://github.com/karpathy/llm.c)** (29.7k) | LLM training in raw C/CUDA. Strip Python and PyTorch entirely; what's left is the math. |
+| Can't reason about inference performance | **[llama2.c](https://github.com/karpathy/llama2.c)** (19.5k) | Single-file dependency-free Llama 2 inference in pure C. |
+| Doesn't understand the full ChatGPT pipeline | **[nanochat](https://github.com/karpathy/nanochat)** (52.6k) | End-to-end pretrain → SFT → RLHF → serve, reproducible for $100. Full-stack literacy dose. |
+| About to train a model and isn't sure how | **[A Recipe for Training Neural Networks](https://karpathy.github.io/2019/04/25/recipe/)** | Step-by-step: become one with the data → end-to-end skeleton with dumb baselines → overfit → regularize → tune. Required reading. |
+
+These are also a stylistic prescription. *Prescribe the Karpathy reading style itself* — when a patient's identity files are bloated, point them at how Karpathy writes READMEs (typically <50 lines, install + use + done). Style transfer matters.
+
 ### Tier 2c — More trusted-community templates
 
 - **[agentskills.io](https://agentskills.io)** — the open standard adopted by Anthropic, Microsoft, OpenAI, Cursor, Goose, Amp, OpenCode for portable skills.

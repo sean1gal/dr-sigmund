@@ -152,6 +152,26 @@ When prioritizing public announcement, lead with these three:
 
 ---
 
+### Open-Loop Agent
+*Pattern.* Agent commits to a multi-step plan and executes it without checking environmental feedback at each step. When state changes mid-plan (a file moves, a build fails, an API returns differently than expected), the agent doesn't notice and the rest of the plan executes against a stale model of the world. Distinct from action-bias because the issue isn't speed — it's blindness.
+*Frequency.* Very high in autonomous coding agents and any agent operating against external systems.
+*Sample.* Anthropic, [Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents) — *"During execution, it's crucial for the agents to gain 'ground truth' from the environment at each step."* The named anti-pattern is the absence of this gain-ground-truth step.
+*Fix.* After every tool call, require the agent to articulate: *what changed in the environment, and does the next planned step still make sense given that change.* Bake into the system prompt as an explicit step. ReAct-style "Thought:" before each new "Action:" is one implementation; explicit `verify_state()` tool calls between plan steps is another.
+
+### Premature Framework Adoption
+*Pattern.* Team picks a framework (LangChain/LangGraph/CrewAI/AutoGen/etc.) before the simplest prompt-based solution has been tried. Framework abstractions hide the LLM's actual behavior; debugging gets harder; month 3 brings a "rewrite from scratch."
+*Frequency.* Very high among teams new to building with LLMs.
+*Sample.* HN [44301809](https://news.ycombinator.com/item?id=44301809), suninsight (NonBioS.ai): *"We did exactly that, and had to throw everything away just a month down the line. Then we built everything from scratch and now our system scales pretty well."* Anthropic explicitly warns: *"Frameworks often create extra layers of abstraction that can obscure the underlying prompts and responses, making them harder to debug. They can also make it tempting to add complexity when a simpler setup would suffice."* Specific framework grievance from same thread (davedx on LangGraph): *"you spend so much time just fixing stupid runtime type errors because the state of every graph is a stupid JSON blob."*
+*Fix.* Build the simplest non-framework version first — single LLM call with retrieval and tools — and feel the actual pain before reaching for abstraction. *Anthropic: "If you do use a framework, ensure you understand the underlying code. Incorrect assumptions about what's under the hood are a common source of customer error."* If the patient cannot articulate what their framework adds beyond LLM-call orchestration, the framework is adding cost without value. Migrate down (litellm-style thin wrapper) if vendor portability is the only justified need.
+
+### Epistemic Humility Failure
+*Pattern.* Agent does not signal uncertainty when uncertain. Either commits confidently to wrong answers (the common form), or hedges every answer including the certain ones (the inverse failure). The patient appears uniformly confident regardless of whether it actually knows.
+*Frequency.* Universal in poorly-prompted agents.
+*Sample.* AI Agents Simplified ([Simplified Guide](https://aiagentssimplified.substack.com/p/simplified-guide-to-build-effective), April 2025) — *"Design it to admit when it needs help — users actually trust that more."* Anthropic Claude Constitution emphasizes calibrated honesty as a primary virtue. The HN thread on Building Effective Agents has multiple practitioners describing agent over-confidence as their biggest production pain.
+*Fix.* In the system prompt, name explicit conditions for "I don't know" or "I'm not sure": when no source is found, when the requested action exceeds tool capability, when reasoning is below a stated confidence floor. Make the failure explicit, not silent. Pair with an outcome-based eval ("did it accomplish the goal?") rather than answer-based ("did it answer?") so the calibration is measurable.
+
+---
+
 ## How to use this file
 
 Loaded by Dr. Sigmund alongside `clinical-manual.md`. When a session surfaces evidence matching one of these patterns, use the **name verbatim** in the diagnosis. Cite the GitHub issue or source inline so the patient's owner can verify. The naming-and-citation pair is what makes the diagnosis credible *and* shareable.
