@@ -4,6 +4,45 @@ All notable changes to Dr. Sigmund are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] — 2026-04-27 — MCP server, the universal delivery surface
+
+The v0.2 anchor. Dr. Sigmund is now reachable from any MCP-capable agent (Claude Code, Claude Desktop, Cursor, Cline, Windsurf, Codex CLI, Goose, Crush, Continue, NeMo Agent Toolkit, Letta, Google ADK, OpenAI Agents SDK, JetBrains, Zed, ChatGPT) with one MCP config block. No per-runtime adapter required.
+
+### Added
+
+**`sigmund-mcp-server/`** — FastMCP-based server exposing five tools:
+- `sigmund.scan(workspace_path)` — runs the full forensic lab, returns markdown report
+- `sigmund.probe(probe_name, workspace_path)` — runs a single named probe, returns YAML
+- `sigmund.protocol()` — returns the full session protocol (SKILL.md content)
+- `sigmund.reference(name)` — returns a named reference file (clinical-manual, pharmacy, wild-pathologies, case-studies, runtime-adapters, etc.)
+- `sigmund.recommend(symptom)` — pharmacy lookup by symptom or pathology name
+
+**Architecture: calling agent IS the LLM.** The MCP server makes no LLM calls itself. The calling agent (Cursor, Claude Desktop, etc.) uses these tools to gather evidence, load knowledge, follow protocol, and look up prescriptions. The diagnostic engine runs in the calling agent's context. This preserves the safety §0 rule (no network egress in intake) — the server only reads local files and runs local subprocess calls.
+
+**Install**: `pip install -e .` from `sigmund-mcp-server/` (PyPI release follows). Standard config block:
+
+```json
+{
+  "mcpServers": {
+    "sigmund": { "command": "sigmund-mcp-server" }
+  }
+}
+```
+
+Per-client install snippets in [`sigmund-mcp-server/README.md`](sigmund-mcp-server/README.md) for Claude Desktop, Claude Code, Cursor, Cline, Windsurf, Codex CLI, Goose, Crush, Continue, NeMo Agent Toolkit.
+
+### Changed
+
+- README now leads with universality (any agent, any CLI, any environment) — the previous Claude-Code-skill-first framing under-sold the universality.
+- `runtime-adapters.md` — new reference cataloging 16 supported/known runtimes with identity-file paths, scanner-adapter status, and detection signals. Adopts AGENTS.md (Linux Foundation / Agentic AI Foundation) as the cross-vendor standard. Status legend: full / partial / reference-only.
+- SKILL.md loads `runtime-adapters.md` at intake (Phase 1) for runtime detection.
+
+### Validated
+
+End-to-end smoke test passed on all 5 tools: scan returned full report on claude-seo, probe ran cache-invalidation correctly, reference loaded runtime-adapters.md, protocol loaded SKILL.md, recommend matched against "Memory Write-Only Syndrome" and returned pharmacy entries.
+
+---
+
 ## [0.1.0] — 2026-04-27 — Initial release
 
 The first cut. The clinician, the lab, and the brand are in place. End-to-end validated on two patients (an OpenClaw CEO agent and a Tier 4 Claude Code skill) using faithful instantiation.
