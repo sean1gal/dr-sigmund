@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.coverage
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project — local-only files that shouldn't ship
+# (sample sessions in skill/sigmund/examples/ DO get committed as references)
+.env
+.env.*
+*.local
+
+# Source PDFs that informed early thinking but aren't referenced in the product
+*.pdf
+
+# Claude Code local settings (per-user, not project-shared)
+.claude/settings.local.json
+
+# Deprecated working directories (canonical content lives under skill/sigmund/)
+# These were the v0.0 staging locations; safe to delete after v0.1.0.
+/reference/
+/sample-sessions/
