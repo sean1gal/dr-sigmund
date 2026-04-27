@@ -4,6 +4,40 @@ All notable changes to Dr. Sigmund are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] — 2026-04-27 — Tighten pass
+
+Add nothing. Subtract relentlessly. Anthropic's *Building Effective Agents* says "start with the simplest solution and only add complexity when necessary." We had been adding for too long without subtracting.
+
+### Changed
+
+- **Six probe scripts → one `skill/sigmund/lab.py` module** (~430 lines, importable). Karpathy-style "one inspectable file." Each probe is a pure function returning a `Finding` dataclass. CLI usage unchanged: `python lab.py <workspace> [--probe NAME]`.
+- **`sigmund-symptom-scanner/sigmund_scan.py` rewrote** — was ~190 lines using subprocess to call individual probe scripts. Now ~60 lines importing from `lab.py`. Faster (no subprocess overhead), inspectable in one screen.
+- **`sigmund-mcp-server/server.py` rewrote** — was ~230 lines with subprocess + complex path discovery + marketing docstrings. Now ~110 lines importing from `lab.py` directly. Same five tools, same outputs.
+- **README tightened** — was ~200 lines of marketing prose. Now ~80 lines: install, what it diagnoses, samples, privacy. Karpathy's nanoGPT README is ~50 lines and tells you everything.
+
+### Removed
+
+- `skill/sigmund/scripts/` — six standalone probe scripts (memory-health-check, git-thrash-audit, permission-bypass-audit, injection-shaped-string-scan, cache-invalidation-scan, re-read-counter). All consolidated into `lab.py`.
+- `sessions/enola-revenu-session-001-v3.md` — reconstruction draft. v4 (faithful instantiation) is the canonical sample.
+- `sessions/enola-revenu-session-001.md` — earlier hand-written draft, superseded.
+- `reference/` — deprecated working dir. Canonical content lives at `skill/sigmund/references/`.
+- `sample-sessions/` — deprecated working dir. Canonical content lives at `skill/sigmund/examples/`.
+
+### Net
+
+- **Files: 33 → 26** (one new `lab.py`, eight deletions)
+- **Code lines (non-reference): roughly -25%** (lab consolidation + scanner/server rewrites)
+- **README: -60%** (200 → 80 lines)
+
+### Known issues for v0.3.1
+
+- `injection-scan` produces false positives on knowledge-base files that *describe* prompt injection patterns (the patterns self-match). Same class as the v0.1 git-thrash false positive that surfaced from cold-testing on claude-seo. Fix: require the pattern to appear in a position that suggests live instruction (not inside a quoted/example block).
+- `lab.py to_yaml()` flattens lists-of-dicts onto one line each. Functional but not strictly valid YAML for nested structures. Cosmetic.
+- `SKILL.md` is still ~350 lines. Tightening pass deferred to v0.3.1.
+- Reference files still range 200-500 lines each. The clinical-manual is 523 lines. Audit and tighten pending.
+
+---
+
 ## [0.2.0] — 2026-04-27 — MCP server, the universal delivery surface
 
 The v0.2 anchor. Dr. Sigmund is now reachable from any MCP-capable agent (Claude Code, Claude Desktop, Cursor, Cline, Windsurf, Codex CLI, Goose, Crush, Continue, NeMo Agent Toolkit, Letta, Google ADK, OpenAI Agents SDK, JetBrains, Zed, ChatGPT) with one MCP config block. No per-runtime adapter required.

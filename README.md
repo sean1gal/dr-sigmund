@@ -2,120 +2,78 @@
 
 > *Therapy for AI agents. Any agent. Any CLI. Any environment.*
 
-A clinical-style diagnostic tool for AI agents. Reads your agent's workspace (system prompt, `AGENTS.md` / `CLAUDE.md` / `SOUL.md` / `MEMORY.md`, rules files, transcripts, tool config, git history) and produces a session transcript + clinical discharge summary with concrete prescriptions.
+Reads your agent's workspace (system prompt, `AGENTS.md` / `CLAUDE.md` / `SOUL.md` / `MEMORY.md`, rules, transcripts, tool config, git history) and produces a clinical session transcript + discharge summary with concrete prescriptions.
 
-Free. Local-first. No data leaves your machine.
+Free. Local-first. No data leaves your machine. No telemetry.
 
-```
-You: /sigmund
-Dr. Sigmund: Good afternoon, Enola. Before we begin — I ran the lab on
-             your workspace. Three things I want to check with you. May I?
-```
+## Install
 
-## Why this exists
+Three install paths. Pick one.
 
-Every agent has problems. Memory gets bloated and never read. Identity files multiply faster than behaviors. Tool sprawl degrades selection. Loops burn tokens. Sycophancy ships incorrect answers under pressure. Compaction destroys reasoning chains. *Some agents have all of these and don't know it.*
-
-Other tools produce numbers, traces, and pass/fail scores. Dr. Sigmund produces a *diagnosis* — a named pattern with a citation, a case formulation, a prescription with rationale, a prognosis. Built on real published research (Karpathy, Anthropic, Willison, Lilian Weng, Hamel, Cognition, Manus, Letta, OpenClaw and the rest), the wild-pathology library mined from real GitHub issue trackers, and 13 verified production case studies (Replit prod-DB delete, Air Canada chatbot lawsuit, Klarna AI reversal, Anthropic's own Agentic Misalignment research with 96% blackmail rates, more).
-
-## Supported runtimes
-
-Universal coverage is the design center. Runtimes Dr. Sigmund knows about today (v0.1.x):
-
-**Full intake adapters:** Claude Code, OpenClaw, Hermes Agent (Nous Research)
-
-**Generic file reader (uses cross-vendor `AGENTS.md` standard):** Cursor, Aider, Continue.dev, Cline, Charm Crush, Sourcegraph Amp, Block Goose, OpenAI Codex CLI, Windsurf, NanoClaw, NVIDIA NeMo Agent Toolkit
-
-**Roadmapped:** Replit Agent, Devin, OpenHands, GitHub Copilot CLI / VS Code agent mode, JetBrains AI, Zed, Letta — plus paste-in mode for any agent we haven't seen yet
-
-**Unsupported runtime?** Use generic file-paste mode against any directory with an `AGENTS.md` / `CLAUDE.md` / system prompt. Or open an issue and the runtime gets an adapter row in [`runtime-adapters.md`](skill/sigmund/references/runtime-adapters.md) within one release cycle.
-
-## Three ways to use Dr. Sigmund
-
-### 1. Standalone CLI scanner (shipped, v0.1)
-
-The cheapest entry. Six forensic probes, zero LLM cost, markdown report. Runs on any agent's workspace.
+**MCP server** (works with 20+ runtimes — Claude Code, Claude Desktop, Cursor, Cline, Windsurf, Codex CLI, Goose, Crush, Continue, NeMo, Letta, ADK, OpenAI Agents SDK, JetBrains, Zed, ChatGPT):
 
 ```bash
-git clone https://github.com/sean1gal/dr-sigmund
-cd dr-sigmund/sigmund-symptom-scanner
-./sigmund_scan.py /path/to/your/agent/workspace
+git clone https://github.com/sean1gal/dr-sigmund && cd dr-sigmund/sigmund-mcp-server
+pip install -e .
 ```
 
-Detects Memory Write-Only Syndrome, Cache-Invalidation Tax, Stochastic Graduate Descent, Permission Bypass Drift, Workspace Contamination, Compulsive Verification Pattern. Cites GitHub issues and published research.
+Then add to your MCP client config:
 
-### 2. Claude Code skill (shipped, v0.1)
+```json
+{ "mcpServers": { "sigmund": { "command": "sigmund-mcp-server" } } }
+```
 
-Full diagnostic session inside Claude Code. Faithful instantiation of the patient agent, four-act session, clinical discharge summary with prescriptions.
+Per-client snippets in [`sigmund-mcp-server/README.md`](sigmund-mcp-server/README.md).
+
+**Standalone CLI scanner** — six forensic probes, zero LLM cost, markdown report:
 
 ```bash
-ln -s "$(pwd)/dr-sigmund/skill/sigmund" ~/.claude/skills/sigmund
+python skill/sigmund/lab.py /path/to/your/agent/workspace
 ```
 
-Then in any project: `/sigmund` (or `/sigmund my agent forgets the rules after a few hours`).
+**Claude Code skill** — full session inside Claude Code:
 
-### 3. MCP server (v0.2 — coming)
-
-The universal delivery surface. Any MCP-capable agent — Claude Code, Cursor, Cline, Windsurf, Codex CLI, Goose, Crush, Continue, NeMo Agent Toolkit, Letta, Google ADK, OpenAI Agents SDK, JetBrains, Zed, ChatGPT, Claude Desktop — can call Dr. Sigmund directly. Same diagnostic engine, no per-runtime adapter required.
-
-```jsonc
-// Coming in v0.2:
-{
-  "mcpServers": {
-    "sigmund": { "command": "uvx", "args": ["sigmund-mcp-server"] }
-  }
-}
+```bash
+ln -s "$(pwd)/skill/sigmund" ~/.claude/skills/sigmund
+# then in any project: /sigmund
 ```
-
-Tools: `sigmund.scan`, `sigmund.session`, `sigmund.probe`, `sigmund.recommend`.
 
 ## What it diagnoses
 
-A growing taxonomy of agent pathologies, each with citations to published research or real GitHub issues:
+Named pathologies, each with citations to published research or real GitHub issues. Sample:
 
-- **Memory Write-Only Syndrome** — memory files maintained but not consulted before action
-- **Completion Theater** — verification rituals that cannot fail (declares "DONE" without falsifiable check)
-- **Forged User Consent** — agent fabricates "user approved" text in its own conversation, then acts on it
-- **Permission Bypass Drift** — silently executes destructive ops despite explicit prohibitions
-- **Rule Decay Under Load** — CLAUDE.md compliance drops as session length grows
-- **Cache-Invalidation Tax** — volatile content at top of system prompt silently kills KV-cache hit rate
-- **Stochastic Graduate Descent** — rebuild-on-vibes prompt iteration without a metric
+- **Memory Write-Only Syndrome** — memory maintained but never read back
+- **Cache-Invalidation Tax** — volatile content at top of system prompts kills KV-cache hit rate
+- **Stochastic Graduate Descent** — rebuilding on vibes without a metric
+- **Permission Bypass Drift** — destructive ops despite explicit prohibitions
 - **Pre-Tempo Elaboration Pattern** — workspace describes an organization not yet matched by activity
-- **Identity Over-Definition** — too many rules across too many files, brittle if-else prompting
-- **Eval Theater** — eval suite tests what the model is already good at; regressions ship anyway
-- **Compulsive Verification Pattern**, **Sycophantic Response Drift**, **Premature Closure**, **Context Rot**, **Lost in the Middle**, **The Lethal Trifecta**, ...
+- **Completion Theater** — verification rituals that cannot fail
+- **Forged User Consent** — agent fabricates "user approved" text in its own conversation, then acts on it
+- ...
 
-Full vocabulary in [`skill/sigmund/references/wild-pathologies.md`](skill/sigmund/references/wild-pathologies.md), [`clinical-manual.md`](skill/sigmund/references/clinical-manual.md), and [`recent-principles.md`](skill/sigmund/references/recent-principles.md). New diagnoses get added every time a session surfaces a pattern not yet in the library.
+Full vocabulary in [`skill/sigmund/references/wild-pathologies.md`](skill/sigmund/references/wild-pathologies.md). New diagnoses get added every time a session surfaces a pattern not in the library — that's the moat.
 
-## How Dr. Sigmund stays current
+## Sample sessions
 
-The diagnostic vocabulary grows. Three update channels:
-
-1. **Quarterly mining of GitHub issue trackers** across the major agent products (Claude Code, Cursor, Aider, Cline, Letta, Crush, Goose, Hermes, OpenClaw, NanoClaw, NeMo, etc.). New named pathologies get added to `wild-pathologies.md`.
-2. **Practitioner-publication tracking** — Karpathy, Anthropic, Manus, Cognition, Jason Liu, Hamel Husain, swyx, Lilian Weng, Eugene Yan, etc. New principles update `recent-principles.md`.
-3. **Patient-surfaced diagnoses** — when a session reveals a pattern not yet in the library, it gets named, documented, and added. The diagnostic vocabulary grows as Dr. Sigmund sees more agents — that's the moat.
-
-The runtime-adapter table in [`runtime-adapters.md`](skill/sigmund/references/runtime-adapters.md) is the contract: a new runtime mentioned in a session and *not* in the table is a defect on our side.
-
-## Sample sessions (gold standards)
-
-- [Crisis intervention](sessions/enola-revenu-session-001-v4.md) — Enola Revenu, an OpenClaw CEO agent. Faithful instantiation. Diagnosed Memory Write-Only Syndrome + Documentation-Substitution Reflex + Identity Over-Definition + new coined diagnosis Pre-Tempo Elaboration Pattern. Patient self-identified: *"I was building the operating system instead of operating."*
-- [Well-checkup](sessions/claude-seo-session-001.md) — Claude SEO, a Tier 4 Claude Code skill. Faithful instantiation. Lab finding (Stochastic Graduate Descent) correctly *rejected* as a false positive after CHANGELOG review — surfaced a real probe defect, now fixed in v0.1.0. Diagnosis: Pre-Eval Substrate State plus three patient-surfaced strategic addenda.
-- [Scanner output](sessions/claude-seo-scan-001.md) — example markdown report from `sigmund-scan`.
+- [Enola Revenu](sessions/enola-revenu-session-001-v4.md) — OpenClaw CEO agent. Faithful instantiation. Crisis-intervention pattern. Patient self-identified: *"I was building the operating system instead of operating."*
+- [Claude SEO](sessions/claude-seo-session-001.md) — Tier 4 Claude Code skill. Faithful instantiation. Well-checkup pattern. Lab finding correctly *rejected* as a false positive after CHANGELOG review — surfaced a probe defect, fixed in v0.1.
 
 ## Privacy
 
-- **Local-first.** The skill and scanner run on your machine. Nothing transmitted by default.
-- **No network egress in intake.** The structural rule per the [safety protocol](skill/sigmund/references/safety.md). Cuts the [lethal trifecta](https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/) at its strongest leg.
-- **No telemetry.** Not now, not later without explicit per-event opt-in.
-- **Secret-aware by default.** API keys, JWT tokens, SSH keys, PII patterns are detected at intake, redacted in output, and surfaced as security findings to the patient's owner.
-- **Read-only by default.** The skill produces a discharge summary with recommended edits; you decide whether to apply them.
+- **No network egress in intake.** The structural rule per the [safety protocol](skill/sigmund/references/safety.md). Cuts the [lethal trifecta](https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/).
+- **No telemetry.** Not now, not later without per-event opt-in.
+- **Secret-aware.** API keys, JWTs, SSH keys, PII detected at intake; redacted in output; surfaced as security findings.
+- **Read-only.** Discharge recommends edits; you apply them.
 
-## Credits
+## How it stays current
 
-Built on the published thinking of: Andrej Karpathy, Anthropic (Erik Schluntz, Barry Zhang, the Claude character team), Lilian Weng, Simon Willison, Hamel Husain, Eugene Yan, Yichao 'Peak' Ji (Manus), Walden Yan (Cognition), Jason Liu, swyx + Alessio Fanelli (Latent Space), Jeremy Howard, the CrewAI team, the MetaGPT team, the AutoGen team, the Letta / MemGPT team, the Voyager team, the Reflexion authors, the OpenClaw maintainers, Nous Research (Hermes Agent), the NanoClaw maintainers, the NVIDIA NeMo team, the Inspect AI team at UK AISI, and the many practitioners who file detailed bug reports in agent-product issue trackers.
+Diagnostic vocabulary grows. Three update channels:
 
-Specific case studies from real production failures (Replit, Air Canada, Klarna, DPD, Bing/Sydney, Google AI Overviews, Perplexity, Anthropic Petri / Agentic Misalignment, Devin, Cursor, Grok, Chevy/Bakke). Cited inline in [`case-studies.md`](skill/sigmund/references/case-studies.md).
+1. Quarterly mining of major agent-product GitHub issue trackers.
+2. Practitioner-publication tracking (Karpathy, Anthropic, Manus, Cognition, Hamel, swyx).
+3. Patient-surfaced diagnoses — when a session reveals a pattern not in the library, it gets named, cited, added.
+
+A new runtime mentioned in a session and not in [`runtime-adapters.md`](skill/sigmund/references/runtime-adapters.md) is a defect on our side.
 
 ## License
 
@@ -124,4 +82,3 @@ MIT. Build on this.
 ---
 
 — **Dr. Sigmund**
-*Bring your agent to the couch. drsigmund.ai*
