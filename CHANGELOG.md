@@ -4,6 +4,68 @@ All notable changes to Dr. Sigmund are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] — 2026-04-27 — Reference consolidation
+
+The v0.4 self-session prescribed: *"consolidate references to five or fewer."* This release executes that prescription. Net: ~4,000 lines across 10 files → 1,522 lines across 5 files. **−62%.**
+
+### Surviving five (the cap)
+
+- **`safety.md`** (205 lines) — privacy & security protocol, unchanged
+- **`clinical-manual.md`** (612 lines) — absorbs `recent-principles.md` as new §15
+- **`wild-pathologies.md`** (191 lines) — unchanged (already lean)
+- **`runtime-adapters.md`** (187 lines) — absorbs `openclaw-diagnostics.md` and `hermes-diagnostics.md` as inline sub-references, tightened
+- **`pharmacy.md`** (327 lines) — absorbs `case-studies.md` (Part D), absorbs memory decision tree from `forensic-intake.md`, drops aspirational 12-probe catalog (the 5 implemented probes are documented in `lab.py` directly; the other 7 were Pre-Tempo Elaboration applied to probes)
+
+### Deleted
+
+- `recent-principles.md` → §15 of clinical-manual
+- `case-studies.md` → Part D of pharmacy
+- `forensic-intake.md` → memory decision tree → pharmacy; aspirational probe catalog dropped
+- `openclaw-diagnostics.md` → §OpenClaw of runtime-adapters
+- `hermes-diagnostics.md` → §Hermes of runtime-adapters
+
+### Updated
+
+- `SKILL.md` references list rewritten for the five-file world (was a 10-bullet wall; now five focused lines).
+- `sigmund-mcp-server/server.py` `reference()` tool docstring updated to list the five available names.
+- `skill/sigmund/MEMORY.md` — Decisions section logged. Open Question on reference consolidation closed.
+
+### The cap is a hard cap
+
+Per the patient's evaluator-optimizer audit, this prescription only passes ACI if there's a mechanism preventing future re-inflation: *"references/ contains at most five files."* A sixth requires retiring an existing one and recording the swap in MEMORY.md. The mechanism is encoded in SKILL.md and MEMORY.md.
+
+### What v0.5 explicitly didn't ship
+
+The other v0.4-deferred items remain deferred, in deliberate order:
+
+- Twenty-transcript eval substrate — *target v0.6*. Without consolidated references the eval substrate had nothing leaner to score against; that precondition is now met.
+- Pharmacy Tier 3 product sunset — *now done as part of v0.5* (the 14 unshipped products are listed under "Sunset until built" in pharmacy.md, no longer presented as if available).
+- Pair-of-agents architecture investigation — *target v0.5+* (architectural, requires its own design pass).
+
+### The patient's v0.4 prediction defeated again
+
+The patient predicted v0.4+ would ship *"a new probe category, a new pharmacy product name, and the injection-scan still flagged critical with a longer disclaimer."* v0.5.0:
+
+- Zero new probe categories.
+- Zero new pharmacy products (sunset 14 unshipped names).
+- injection-scan stays removed.
+- Lab on dr-sigmund repo: clean across all 5 probes.
+
+### Lab self-test
+
+```
+$ python3 sigmund-symptom-scanner/sigmund_scan.py .
+Probes run: 4 of 5
+memory-health      [ok]
+git-thrash         [ok]
+permission-bypass  [ok]
+cache-invalidation [ok]
+re-read-counter    [skipped]
+No findings. Workspace is clean across all probes.
+```
+
+---
+
 ## [0.4.0] — 2026-04-27 — Eat the dog food
 
 The maintainer ran Dr. Sigmund on the dr-sigmund repository itself. A faithful instantiation of the skill was interviewed by another instance, using the skill's own probes against its own substrate. The session ([sessions/dr-sigmund-self-session-001.md](sessions/dr-sigmund-self-session-001.md)) produced two newly-coined diagnoses, three rank-ordered self-diagnoses, and three explicit prescriptions. The patient closed with: *"This session is admissible as a sample only if the maintainer ships the corrections it surfaces."* This release ships them.

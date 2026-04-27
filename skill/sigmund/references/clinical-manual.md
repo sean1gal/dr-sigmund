@@ -520,4 +520,93 @@ Dr. Sigmund's prescription pad of Anthropic-shipped remedies. When the patient p
 
 ---
 
+## 15. Recent practitioner updates (2025-2026)
+
+The principles in §1-§14 are foundational. This section is the rolling update layer — what published practitioners have added since the foundational sources, and where the field has changed its mind.
+
+### The most consequential update: Cognition reversed "Don't Build Multi-Agents"
+
+Cognition's evolved 2025 stance ([Multi-Agents: What's Actually Working](https://cognition.ai/blog/multi-agents-working)): *"Multi-agent systems work best today when writes stay single-threaded and the additional agents contribute intelligence rather than actions."* Read-subagents (review, search, analysis) earn their context. Write-parallel swarms still don't. Read both this and the original "Don't Build Multi-Agents" before any multi-agent build.
+
+### Anthropic — three core principles (Dr. Sigmund's diagnostic axes)
+
+[Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents) names three:
+1. **Simplicity** — *"Maintain simplicity in your agent's design."*
+2. **Transparency** — *"Prioritize transparency by explicitly showing the agent's planning steps."*
+3. **ACI quality** — *"Carefully craft your agent-computer interface (ACI) through thorough tool documentation and testing."*
+
+Phase 3 of every Dr. Sigmund session scores the discharge against these three (see SKILL.md Phase 3 — the Evaluator-Optimizer self-critique).
+
+### Anthropic — the augmented LLM is the atomic building block
+
+*"The basic building block of agentic systems is an LLM enhanced with augmentations such as retrieval, tools, and memory."* Every diagnosis starts here: does this patient have appropriate retrieval, tools, and memory? Missing one is a named deficit.
+
+### The five workflow patterns (clarified)
+
+| Pattern | When to use |
+|---|---|
+| **Prompt Chaining** | Task cleanly decomposes into fixed subtasks. Trade latency for accuracy. |
+| **Routing** | Distinct categories better handled separately, classification accurate. Includes model routing. |
+| **Parallelization — Sectioning** | Independent subtasks parallelizable for speed. |
+| **Parallelization — Voting** | Multiple attempts/perspectives for higher confidence. *Distinct from sectioning.* |
+| **Orchestrator-Workers** | Can't predict subtasks. *"Subtasks aren't pre-defined, but determined by the orchestrator."* |
+| **Evaluator-Optimizer** | Clear evaluation criteria + iterative refinement value. **Dr. Sigmund's Phase 3 uses this on himself.** |
+
+When a patient calls a multi-step workflow an "agent" but the steps are predictable, prescribe one of these patterns instead.
+
+### Anthropic — Poka-yoke for tool design
+
+Verbatim: *"Apply Poka-yoke design — change the arguments so that it is harder to make mistakes."* When a patient's tool design enables silent misuse, prescribe Poka-yoke redesign. Concrete: change `delete(target_id)` to `delete(target_id, confirmation_token=required_string)`.
+
+### Anthropic — ground truth from environment at each step
+
+Verbatim: *"During execution, it's crucial for the agents to gain 'ground truth' from the environment at each step."* Open-loop agents (commit to multi-step plan without re-checking state) are a named pathology. Diagnostic question: *after each tool call, does the agent re-evaluate whether the next planned step still makes sense?*
+
+### Manus — four principles from the most-cited 2025 source
+
+Yichao 'Peak' Ji, [Context Engineering for AI Agents — Lessons from Building Manus](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus):
+
+1. **KV-cache hit rate is the production metric most teams ignore.** *"The single most important metric for a production-stage AI agent."* Stable prompt prefixes, append-only context, explicit cache breakpoints. Volatile content (timestamps, varying tool lists) at the top silently doubles cost.
+2. **Mask, don't remove.** When restricting tools, mask token logits during decoding rather than mutating the tool list — mutation invalidates KV cache and confuses the model when it sees prior calls to now-missing tools.
+3. **File system as ultimate context.** Filesystem reads/writes are a memory layer, not just I/O. Specify which files are durable state vs scratch.
+4. **Keep the wrong stuff in.** *"Leave the wrong turns in the context."* Removing failed actions removes the signal that lets the model implicitly update its beliefs and not repeat them.
+
+### The "Three Powers" plain-language layer
+
+[AI Agents Simplified](https://aiagentssimplified.substack.com/p/simplified-guide-to-build-effective): *"An effective AI agent has three key powers: Autonomy, Memory, Tool Use."* Use this when the patient's owner is non-technical instead of *augmented LLM*. Same concept, layperson-accessible.
+
+### Outcome-based eval framing
+
+Same Substack: *"Don't just measure 'Did it answer?' Measure 'Did it accomplish the goal?'"* When a patient has a passing eval suite but real failures, the eval is measuring *did it answer* rather than *did it accomplish the goal* — that's Eval Theater.
+
+### Tool design — Jason Liu
+
+[Rapid Agent Prototyping](https://jxnl.co/writing/2025/09/04/context-engineering-rapid-agent-prototyping/): tools should return *"STATUS, OUTPUT_FILE, METRICS, WARNINGS, and FACETS"* — peripheral vision about task completion. Errors should *"guide next actions."* Audit tool return shapes; bare values are missed opportunities.
+
+### Recitation — Manus
+
+The agent maintains and rewrites a checklist to *"bias its own focus toward the task objective"* — restating the goal pulls it into recent context where attention is strongest. Cheap counter to Rule Decay Under Load.
+
+### Initializer + worker for long-running work
+
+Anthropic [Effective harnesses](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents): *"The very first agent session uses a specialized prompt that asks the model to set up the initial environment"* — subsequent sessions inherit that scaffolding through git history and a progress file. Two prompts beat one for any task that spans sessions.
+
+### Skills > prompts for procedural knowledge
+
+Anthropic [Equipping agents for the real world with Agent Skills](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills): *"Real work requires procedural knowledge and organizational context."* When a behavior recurs across sessions, factor it out of the system prompt into a SKILL.md. The prompt declares *who*; skills carry *how*. Cursor, Goose, Amp, OpenCode, Microsoft, OpenAI all adopted [agentskills.io](https://agentskills.io/home).
+
+### HN — three things Anthropic's post under-emphasizes
+
+From the [HN 44301809 thread](https://news.ycombinator.com/item?id=44301809):
+
+1. **Vendor-swap is rarely the bottleneck** (XenophileJKO). *"Having built several systems serving massive user bases with LLMs. I think the ability to swap out APIs just isn't the bottleneck."* Heavy framework purely for vendor portability is over-engineering.
+2. **Cost reality.** A real-time conversation can burn $60 in tokens; n8n workflow runs $3/3min. Always prescribe a cost-budget gate alongside autonomous loops.
+3. **Operational complexity stays.** *"Nothing works automagically. You still have to build in all the operational characteristics that you would for any traditional system."* Add *"what's the on-call story?"* to any production-prescription session.
+
+### Slop scaling — swyx
+
+[Latent Space 2026 thesis](https://www.latent.space/p/2026): *"The most important problem in media now is scaling without slop."* The defeat is *"cutting back"* output; the win is *"changing the slope of slop."* When patients ship LLM output without curation, prescribe a curation gate with a stated reject-rate target.
+
+---
+
 *End of manual.*

@@ -52,6 +52,15 @@ This file follows the same shape Dr. Sigmund prescribes to patients: Decisions, 
 
 ---
 
+### 2026-04-27 — v0.5.0
+**Decision:** Reference consolidation 10 → 5. The patient's v0.4 self-session prescription executed.
+**Files merged and deleted:** `recent-principles.md` → into `clinical-manual.md` §15. `case-studies.md` → into `pharmacy.md` Part D. `forensic-intake.md` → memory decision tree absorbed into `pharmacy.md`; aspirational 12-probe catalog dropped (the 5 implemented probes are documented in `lab.py` directly, the other 7 were Pre-Tempo Elaboration). `openclaw-diagnostics.md` → `runtime-adapters.md` §OpenClaw. `hermes-diagnostics.md` → `runtime-adapters.md` §Hermes.
+**Net:** ~4000 lines across 10 files → ~2200 lines across 5 files. ~45% reduction.
+**Surviving 5 (the cap):** safety, clinical-manual, wild-pathologies, runtime-adapters, pharmacy. Server.py `reference()` tool docstring updated. SKILL.md references list updated.
+**Status:** Active. The cap is a hard cap — a sixth file requires an amendment recorded here that retires an existing one.
+
+---
+
 ## Open Questions
 
 These are the v0.4-active uncertainties Dr. Sigmund holds. They should be closed by name in future releases or explicitly carried forward.

@@ -83,9 +83,8 @@ def protocol() -> str:
 
 @mcp.tool()
 def reference(name: str) -> str:
-    """Return a named reference file. Available: safety, clinical-manual, recent-principles,
-    wild-pathologies, case-studies, forensic-intake, pharmacy, runtime-adapters,
-    openclaw-diagnostics, hermes-diagnostics."""
+    """Return a named reference file. Available: safety, clinical-manual,
+    wild-pathologies, runtime-adapters, pharmacy. (Consolidated to 5 in v0.5.0.)"""
     available = sorted(p.stem for p in (SKILL / "references").glob("*.md"))
     if name not in available:
         return f"error: unknown reference '{name}'. available: {', '.join(available)}"
